@@ -29,7 +29,7 @@ async function fetchProducts() {
             const card = document.createElement('div');
             card.className = 'card';
             
-            // تحويل رابط جوجل درايف المعروض إلى رابط مباشر تلقائياً إذا كان بصيغة /file/d/
+            // تحويل رابط جوجل درايف تلقائياً للعرض المباشر
             let imgUrl = product.Image_URL;
             if (imgUrl.includes('drive.google.com/file/d/')) {
                 const fileIdMatch = imgUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
