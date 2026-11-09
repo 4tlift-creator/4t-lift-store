@@ -10,13 +10,14 @@ async function fetchProducts() {
         const response = await fetch(CSV_URL);
         const data = await response.text();
         
-        const rows = data.split('\n').map(row => row.split(','));
-        const headers = rows[0].map(h => h.trim());
+        const rows = data.split('\n').map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+        const headers = rows[0].map(h => h.trim().replace(/^"|"$/g, ''));
         
         const products = rows.slice(1).filter(r => r.length > 1).map(row => {
             let item = {};
             headers.forEach((header, index) => {
-                item[header] = row[index] ? row[index].trim() : '';
+                let val = row[index] ? row[index].trim() : '';
+                item[header] = val.replace(/^"|"$/g, '');
             });
             return item;
         });
@@ -29,12 +30,12 @@ async function fetchProducts() {
             const card = document.createElement('div');
             card.className = 'card';
             
-            // تحويل رابط جوجل درايف تلقائياً للعرض المباشر
+            // معالجة رابط جوجل درايف لاستخراج الـ ID وعرض الصورة مباشرة
             let imgUrl = product.Image_URL;
-            if (imgUrl.includes('drive.google.com/file/d/')) {
-                const fileIdMatch = imgUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (fileIdMatch && fileIdMatch[1]) {
-                    imgUrl = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+            if (imgUrl && imgUrl.includes('drive.google.com')) {
+                const match = imgUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || imgUrl.match(/id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    imgUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
                 }
             }
 
@@ -57,3 +58,4 @@ async function fetchProducts() {
         grid.innerHTML = '<p>تعذر تحميل البيانات، يرجى التأكد من إعدادات Google Sheet.</p>';
     }
 }
+ 
