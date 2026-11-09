@@ -1,6 +1,5 @@
-// رابط Opensheet المجاني للوصول إلى Google Sheets بدون API Key
-const SHEET_ID = 'YOUR_SPREADSHEET_ID'; 
-const API_URL = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
+// رابط النشر الخاص بك بصيغة CSV لسهولة قراءة البيانات مباشرة
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQs3dVUTF9eYVt5aGsZm8yu2Kyugv6EbLeh3NQer_EXXVfB1DTcvoyuk5xOKnB6BMbYfxkwqyPcyXgn/pub?output=csv';
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
@@ -9,16 +8,29 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchProducts() {
     const grid = document.getElementById('products-grid');
     try {
-        const response = await fetch(API_URL);
-        const products = await response.json();
+        const response = await fetch(CSV_URL);
+        const data = await response.text();
         
+        // تحويل بيانات الـ CSV إلى مصفوفة أسطر
+        const rows = data.split('\n').map(row => row.split(','));
+        const headers = rows[0].map(h => h.trim());
+        
+        const products = rows.slice(1).filter(r => r.length > 1).map(row => {
+            let item = {};
+            headers.forEach((header, index) => {
+                item[header] = row[index] ? row[index].trim() : '';
+            });
+            return item;
+        });
+
         grid.innerHTML = '';
 
         products.forEach(product => {
+            if (!product.Title) return;
+
             const card = document.createElement('div');
             card.className = 'card';
             
-            // تجهيز رابط الواتساب للطلب المباشر
             const whatsappMsg = encodeURIComponent(`مرحباً، أريد الاستفسار عن شراء ${product.Title} بسعر ${product.Price} ج.م`);
             const whatsappUrl = `https://wa.me/201000000000?text=${whatsappMsg}`;
 
@@ -26,7 +38,7 @@ async function fetchProducts() {
                 <img src="${product.Image_URL}" alt="${product.Title}" onerror="this.src='https://via.placeholder.com/300x200?text=4T+Lift'">
                 <div class="card-body">
                     <h3 class="card-title">${product.Title}</h3>
-                    <p class="card-desc">${product.Description}</p>
+                    <p class="card-desc">${product.Description || ''}</p>
                     <div class="price-tag">${product.Price} ج.م</div>
                     <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">اطلب الآن عبر WhatsApp</a>
                 </div>
