@@ -1,44 +1,271 @@
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#0d233a">
+    <meta name="theme-color" content="#101D35">
+    <meta name="description" content="4T Lift - Specialized elevator cams and elevator components. Explore our product collection and contact our team.">
 
-    <meta name="description" content="4T Lift - كامات المصاعد وقطع الغيار. تصفح المنتجات والأسعار وتواصل معنا للطلب.">
+    <title>4T Lift | Elevator Components & Engineering</title>
 
-    <title>4T Lift | Elevator Cam & Spare Parts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">
-            <h1>4T Lift</h1>
-            <p>Elevator Cam & Spare Parts</p>
+    <!-- Navigation -->
+    <header class="header">
+        <div class="nav-container">
+
+            <a href="#" class="brand">
+                <span class="brand-mark">4T</span>
+                <span class="brand-name">LIFT<span class="brand-dot">.</span></span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#products">Products</a>
+                <a href="#about">About Us</a>
+                <a href="#contact">Contact</a>
+            </nav>
+
+            <a href="#products" class="nav-cta">
+                Explore Products <span>↗</span>
+            </a>
+
+            <button class="menu-toggle" id="menu-toggle"
+                    aria-label="Toggle navigation" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
         </div>
     </header>
 
-    <main class="container">
 
-        <h2>منتجاتنا وقطع الغيار</h2>
+    <!-- Hero -->
+    <main>
 
-        <div id="products-grid" class="grid">
-            <p class="loading">
-                جاري تحميل المنتجات والأسعار...
-            </p>
-        </div>
+        <section class="hero" id="home">
+
+            <div class="hero-grid"></div>
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <div class="eyebrow">
+                        <span class="eyebrow-line"></span>
+                        ELEVATOR COMPONENTS & ENGINEERING
+                    </div>
+
+                    <h1>
+                        ENGINEERED<br>
+                        FOR <span>PRECISION.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Specialized elevator cams and components.
+                        Designed with engineering precision,
+                        built for dependable performance.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="#products" class="btn-primary">
+                            Explore Our Products <span>↗</span>
+                        </a>
+
+                        <a href="#about" class="btn-secondary">
+                            Discover 4T Lift
+                        </a>
+                    </div>
+
+                    <div class="hero-note">
+                        <span class="status-dot"></span>
+                        ENGINEERING-FOCUSED ELEVATOR SOLUTIONS
+                    </div>
+
+                </div>
+
+                <div class="hero-visual">
+
+                    <div class="visual-frame">
+                        <div class="visual-top">
+                            <span>4T / PRODUCT SERIES</span>
+                            <span>01 — 01</span>
+                        </div>
+
+                        <div class="visual-image">
+                            <img
+                                src="https://drive.google.com/thumbnail?id=1Mv2fjfPMQEQiypdJQgJthcRsz1bc&sz=w1200"
+                                alt="4T Lift Elevator Cam"
+                                onerror="this.style.display='none'"
+                            >
+                            <div class="image-placeholder">
+                                <span>4T LIFT</span>
+                                <small>ELEVATOR CAM</small>
+                            </div>
+                        </div>
+
+                        <div class="visual-bottom">
+                            <span>PRECISION COMPONENTS</span>
+                            <span>4T LIFT © 2026</span>
+                        </div>
+                    </div>
+
+                    <div class="orange-accent"></div>
+
+                </div>
+
+            </div>
+
+            <div class="hero-footer">
+                <span>ENGINEERING / QUALITY / PERFORMANCE</span>
+                <span>SCROLL TO EXPLORE ↓</span>
+            </div>
+
+        </section>
+
+
+        <!-- Brand Introduction -->
+        <section class="intro-section" id="about">
+
+            <div class="section-label">
+                <span>01</span>
+                <span>WHO WE ARE</span>
+            </div>
+
+            <div class="intro-content">
+
+                <h2>
+                    Engineering components.<br>
+                    <span>Purpose-built for elevators.</span>
+                </h2>
+
+                <p>
+                    4T Lift focuses on elevator cams and related components,
+                    bringing together practical engineering, functional design
+                    and product-focused solutions for the elevator industry.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Products -->
+        <section class="products-section" id="products">
+
+            <div class="products-header">
+
+                <div>
+                    <div class="section-label">
+                        <span>02</span>
+                        <span>OUR COLLECTION</span>
+                    </div>
+
+                    <h2>Products & <span>Components.</span></h2>
+
+                    <p>
+                        Explore our available elevator products and components.
+                    </p>
+                </div>
+
+                <div class="product-count">
+                    <span class="count-number" id="product-count">--</span>
+                    <span>PRODUCTS</span>
+                </div>
+
+            </div>
+
+            <div id="products-grid" class="products-grid">
+
+                <div class="loading-state">
+                    <div class="loader"></div>
+                    <p>Loading our products...</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Contact CTA -->
+        <section class="contact-section" id="contact">
+
+            <div class="contact-content">
+
+                <div class="section-label">
+                    <span>03</span>
+                    <span>GET IN TOUCH</span>
+                </div>
+
+                <h2>
+                    Looking for the right<br>
+                    <span>elevator component?</span>
+                </h2>
+
+                <p>
+                    Contact our team to discuss products,
+                    specifications and availability.
+                </p>
+
+                <a
+                    href="https://wa.me/201028593131"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary"
+                >
+                    Talk to Our Team <span>↗</span>
+                </a>
+
+            </div>
+
+            <div class="contact-decoration">4T</div>
+
+        </section>
 
     </main>
 
-    <footer>
-        <p>© 2026 4T Lift. All Rights Reserved.</p>
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <div class="footer-main">
+
+            <a href="#" class="brand footer-brand">
+                <span class="brand-mark">4T</span>
+                <span class="brand-name">LIFT<span class="brand-dot">.</span></span>
+            </a>
+
+            <p>
+                Elevator Cams & Components<br>
+                Engineering-focused solutions.
+            </p>
+
+            <a href="https://wa.me/201028593131"
+               target="_blank"
+               rel="noopener noreferrer">
+                Contact via WhatsApp ↗
+            </a>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2026 4T Lift. All Rights Reserved.</span>
+            <span>ENGINEERED FOR PRECISION.</span>
+        </div>
+
     </footer>
+
 
     <script src="app.js"></script>
 
