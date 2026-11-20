@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -6,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="theme-color" content="#101D35">
-    <meta name="description" content="4T Lift - Specialized elevator cams and elevator components. Explore our product collection and contact our team.">
+    <meta name="description" content="4T Lift - Specialized elevator cams, spare parts, and elevator components. Order directly online via WhatsApp.">
 
-    <title>4T Lift | Elevator Components & Engineering</title>
+    <title>4T Lift | Elevator Components, Spare Parts & Direct Order</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,21 +23,28 @@
     <header class="header">
         <div class="nav-container">
 
-            <a href="#" class="brand">
+            <a href="#home" class="brand">
                 <span class="brand-mark">4T</span>
                 <span class="brand-name">LIFT<span class="brand-dot">.</span></span>
             </a>
 
             <nav class="nav-links">
                 <a href="#home">Home</a>
-                <a href="#products">Products</a>
+                <a href="#products">Products & Parts</a>
                 <a href="#about">About Us</a>
                 <a href="#contact">Contact</a>
             </nav>
 
-            <a href="#products" class="nav-cta">
-                Explore Products <span>↗</span>
-            </a>
+            <div class="nav-actions">
+                <button type="button" class="cart-trigger" id="cart-trigger" aria-label="Open order bag">
+                    <span>Order Bag</span>
+                    <strong class="cart-badge" id="cart-count">0</strong>
+                </button>
+
+                <a href="#products" class="nav-cta">
+                    Order Now <span>↗</span>
+                </a>
+            </div>
 
             <button class="menu-toggle" id="menu-toggle"
                     aria-label="Toggle navigation" aria-expanded="false">
@@ -64,7 +70,7 @@
 
                     <div class="eyebrow">
                         <span class="eyebrow-line"></span>
-                        ELEVATOR COMPONENTS & ENGINEERING
+                        ELEVATOR COMPONENTS, CAMS & SPARE PARTS
                     </div>
 
                     <h1>
@@ -73,24 +79,26 @@
                     </h1>
 
                     <p class="hero-description">
-                        Specialized elevator cams and components.
-                        Designed with engineering precision,
-                        built for dependable performance.
+                        Specialized elevator cams, precision assemblies, and genuine spare parts.
+                        Built for dependable operation with instant online ordering via WhatsApp.
                     </p>
 
                     <div class="hero-actions">
                         <a href="#products" class="btn-primary">
-                            Explore Our Products <span>↗</span>
+                            Browse Catalog & Parts <span>↗</span>
                         </a>
 
-                        <a href="#about" class="btn-secondary">
-                            Discover 4T Lift
+                        <a href="https://wa.me/201028593131?text=Hello%204T%20Lift%2C%20I%20need%20assistance%20with%20an%20elevator%20component%20or%20spare%20part."
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-secondary">
+                            Direct WhatsApp (01028593131)
                         </a>
                     </div>
 
                     <div class="hero-note">
                         <span class="status-dot"></span>
-                        ENGINEERING-FOCUSED ELEVATOR SOLUTIONS
+                        INSTANT ORDERING & TECHNICAL SUPPORT • 01028593131
                     </div>
 
                 </div>
@@ -99,12 +107,13 @@
 
                     <div class="visual-frame">
                         <div class="visual-top">
-                            <span>4T / PRODUCT SERIES</span>
+                            <span>4T / PRODUCT & SPARES SERIES</span>
                             <span>01 — 01</span>
                         </div>
 
                         <div class="visual-image">
                             <img
+                                id="hero-product-image"
                                 src="https://drive.google.com/thumbnail?id=1Mv2fjfPMQEQiypdJQgJthcRsz1bc&sz=w1200"
                                 alt="4T Lift Elevator Cam"
                                 onerror="this.style.display='none'"
@@ -116,7 +125,7 @@
                         </div>
 
                         <div class="visual-bottom">
-                            <span>PRECISION COMPONENTS</span>
+                            <span>PRECISION COMPONENTS & SPARES</span>
                             <span>4T LIFT © 2026</span>
                         </div>
                     </div>
@@ -128,7 +137,7 @@
             </div>
 
             <div class="hero-footer">
-                <span>ENGINEERING / QUALITY / PERFORMANCE</span>
+                <span>ENGINEERING / SPARE PARTS / FAST DISPATCH</span>
                 <span>SCROLL TO EXPLORE ↓</span>
             </div>
 
@@ -147,13 +156,13 @@
 
                 <h2>
                     Engineering components.<br>
-                    <span>Purpose-built for elevators.</span>
+                    <span>Complete spare parts coverage.</span>
                 </h2>
 
                 <p>
-                    4T Lift focuses on elevator cams and related components,
-                    bringing together practical engineering, functional design
-                    and product-focused solutions for the elevator industry.
+                    4T Lift focuses on elevator cams, mechanical assemblies, and replacement spare parts—helping
+                    technicians, contractors, and building managers source exact components and order directly
+                    with zero friction.
                 </p>
 
             </div>
@@ -161,7 +170,7 @@
         </section>
 
 
-        <!-- Products -->
+        <!-- Products & Spare Parts -->
         <section class="products-section" id="products">
 
             <div class="products-header">
@@ -169,28 +178,47 @@
                 <div>
                     <div class="section-label">
                         <span>02</span>
-                        <span>OUR COLLECTION</span>
+                        <span>CATALOG & SPARE PARTS</span>
                     </div>
 
-                    <h2>Products & <span>Components.</span></h2>
+                    <h2>Products & <span>Spare Parts.</span></h2>
 
                     <p>
-                        Explore our available elevator products and components.
+                        Inspect each unit, view compatible spare parts, or add items to your instant order bag.
                     </p>
                 </div>
 
                 <div class="product-count">
                     <span class="count-number" id="product-count">--</span>
-                    <span>PRODUCTS</span>
+                    <span>AVAILABLE ITEMS</span>
                 </div>
 
+            </div>
+
+            <!-- Search & Category Filter Bar -->
+            <div class="catalog-toolbar" id="catalog-toolbar">
+                <div class="search-box">
+                    <input
+                        type="search"
+                        id="product-search"
+                        placeholder="Search by component name, SKU, or spare part..."
+                        aria-label="Search products and spare parts"
+                    >
+                </div>
+
+                <div class="filter-pills" id="category-filters" role="group" aria-label="Filter by category">
+                    <button type="button" class="filter-btn active" data-category="all">All Items</button>
+                    <button type="button" class="filter-btn" data-category="cams">Elevator Cams</button>
+                    <button type="button" class="filter-btn" data-category="spares">Spare Parts</button>
+                    <button type="button" class="filter-btn" data-category="assemblies">Assemblies</button>
+                </div>
             </div>
 
             <div id="products-grid" class="products-grid">
 
                 <div class="loading-state">
                     <div class="loader"></div>
-                    <p>Loading our products...</p>
+                    <p>Loading our products & spare parts...</p>
                 </div>
 
             </div>
@@ -205,26 +233,26 @@
 
                 <div class="section-label">
                     <span>03</span>
-                    <span>GET IN TOUCH</span>
+                    <span>DIRECT ORDERING & SUPPORT</span>
                 </div>
 
                 <h2>
-                    Looking for the right<br>
-                    <span>elevator component?</span>
+                    Need a specific part<br>
+                    <span>or bulk quotation?</span>
                 </h2>
 
                 <p>
-                    Contact our team to discuss products,
-                    specifications and availability.
+                    Order directly online via WhatsApp on <strong>01028593131</strong> for availability,
+                    spare part matching, and fast coordination.
                 </p>
 
                 <a
-                    href="https://wa.me/201028593131"
+                    href="https://wa.me/201028593131?text=Hello%204T%20Lift%2C%20I%20would%20like%20to%20order%20elevator%20components%20or%20spare%20parts."
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-primary"
                 >
-                    Talk to Our Team <span>↗</span>
+                    Order via WhatsApp (01028593131) <span>↗</span>
                 </a>
 
             </div>
@@ -236,25 +264,71 @@
     </main>
 
 
+    <!-- Product & Spare Parts Modal -->
+    <div class="modal-backdrop" id="product-modal" aria-hidden="true">
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button type="button" class="modal-close" id="modal-close" aria-label="Close product details">✕</button>
+            <div class="modal-body" id="modal-content"></div>
+        </div>
+    </div>
+
+
+    <!-- Instant Order Drawer (WhatsApp Checkout) -->
+    <aside class="cart-drawer" id="cart-drawer" aria-hidden="true" aria-label="Your Order Bag">
+        <div class="cart-drawer-header">
+            <div>
+                <span class="cart-eyebrow">INSTANT WHATSAPP ORDER</span>
+                <h3>Your Order Bag</h3>
+            </div>
+            <button type="button" class="drawer-close" id="cart-close" aria-label="Close order bag">✕</button>
+        </div>
+
+        <div class="cart-items" id="cart-items"></div>
+
+        <form class="cart-checkout" id="checkout-form">
+            <div class="cart-summary">
+                <span>Estimated Subtotal</span>
+                <strong id="cart-subtotal">0 EGP</strong>
+            </div>
+
+            <div class="form-field">
+                <label for="customer-name">Name / Company (Optional)</label>
+                <input type="text" id="customer-name" placeholder="e.g., Eng. Ahmed / Nile Elevators">
+            </div>
+
+            <div class="form-field">
+                <label for="customer-note">Site / Delivery Note (Optional)</label>
+                <input type="text" id="customer-note" placeholder="e.g., Giza, urgent delivery">
+            </div>
+
+            <button type="submit" class="btn-primary checkout-submit">
+                Send Order on WhatsApp (01028593131) ↗
+            </button>
+        </form>
+    </aside>
+
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+
     <!-- Footer -->
     <footer class="footer">
 
         <div class="footer-main">
 
-            <a href="#" class="brand footer-brand">
+            <a href="#home" class="brand footer-brand">
                 <span class="brand-mark">4T</span>
                 <span class="brand-name">LIFT<span class="brand-dot">.</span></span>
             </a>
 
             <p>
-                Elevator Cams & Components<br>
-                Engineering-focused solutions.
+                Elevator Cams, Components & Spare Parts<br>
+                Direct Orders: +20 102 859 3131
             </p>
 
             <a href="https://wa.me/201028593131"
                target="_blank"
                rel="noopener noreferrer">
-                Contact via WhatsApp ↗
+                WhatsApp: 01028593131 ↗
             </a>
 
         </div>
