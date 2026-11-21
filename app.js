@@ -214,7 +214,7 @@ function renderFilteredProducts() {
 
 
 // =========================
-// CREATE PRODUCT CARD
+// CREATE PRODUCT CARD (WITH VISUAL SPARE PARTS)
 // =========================
 
 function createProductCard(product) {
@@ -275,7 +275,7 @@ function createProductCard(product) {
     desc.className = 'product-description';
     desc.textContent = description;
 
-    // Spare parts box linked via ID
+    // Spare parts visual grid linked via ID
     if (spares.length > 0) {
         const sparesBox = document.createElement('div');
         sparesBox.className = 'spares-box';
@@ -284,18 +284,64 @@ function createProductCard(product) {
         sparesTitle.className = 'spares-box-title';
         sparesTitle.textContent = `Spare Parts (${spares.length})`;
 
-        const sparesTags = document.createElement('div');
-        sparesTags.className = 'spares-tags';
+        const sparesGrid = document.createElement('div');
+        sparesGrid.className = 'spares-visual-grid';
 
         spares.forEach(sp => {
-            const chip = document.createElement('span');
-            chip.className = 'spare-chip';
-            chip.textContent = `${sp.name} (${sp.priceLabel})`;
-            sparesTags.appendChild(chip);
+            const miniCard = document.createElement('div');
+            miniCard.className = 'spare-mini-card';
+
+            const spImg = document.createElement('img');
+            spImg.className = 'spare-mini-img';
+            spImg.src = sp.imageUrl || 'https://placehold.co/120x80?text=Part';
+            spImg.alt = sp.name;
+            spImg.loading = 'lazy';
+            spImg.referrerPolicy = 'no-referrer';
+            spImg.onerror = function () {
+                this.onerror = null;
+                this.src = 'https://placehold.co/120x80?text=Part';
+            };
+
+            const spName = document.createElement('div');
+            spName.className = 'spare-mini-title';
+            spName.textContent = sp.name;
+
+            const spBottom = document.createElement('div');
+            spBottom.className = 'spare-mini-bottom';
+
+            const spPrice = document.createElement('span');
+            spPrice.className = 'spare-mini-price';
+            spPrice.textContent = sp.priceLabel;
+
+            const spAddBtn = document.createElement('button');
+            spAddBtn.type = 'button';
+            spAddBtn.className = 'spare-mini-add';
+            spAddBtn.textContent = '+ Add';
+            spAddBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToOrderBag({
+                    id: sp.id,
+                    name: `${sp.name} (Spare for ${title})`,
+                    sku: `${sku}-SP`,
+                    price: sp.price,
+                    priceLabel: sp.priceLabel
+                });
+                openOrderBag();
+            });
+
+            spBottom.appendChild(spPrice);
+            spBottom.appendChild(spAddBtn);
+
+            miniCard.appendChild(spImg);
+            miniCard.appendChild(spName);
+            miniCard.appendChild(spBottom);
+
+            sparesGrid.appendChild(miniCard);
         });
 
         sparesBox.appendChild(sparesTitle);
-        sparesBox.appendChild(sparesTags);
+        sparesBox.appendChild(sparesGrid);
+
         body.appendChild(category);
         body.appendChild(heading);
         body.appendChild(desc);
