@@ -1,6 +1,6 @@
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQs3dVUTF9eYVt5aGsZm8yu2Kyugv6EbLeh3NQer_EXXVfB1DTcvoyuk5xOKnB6BMbYfxkwqyPcyXgn/pub?output=csv';
 
-const WHATSAPP_NUMBER = '01028593131';
+const WHATSAPP_NUMBER = '201028593131';
 
 let allProducts = [];
 let activeCategory = 'all';
@@ -115,7 +115,7 @@ function parseCSV(csv) {
 
 
 // =========================
-// SPARE PARTS & CATEGORY HELPERS
+// HELPERS
 // =========================
 
 function parsePriceNumber(rawPrice) {
@@ -128,71 +128,15 @@ function parsePriceNumber(rawPrice) {
 function formatPriceLabel(rawPrice) {
     const num = parsePriceNumber(rawPrice);
     if (num > 0) return `${num} EGP`;
-    return rawPrice && rawPrice.trim() ? rawPrice.trim() : 'Price on Request';
+    return rawPrice && rawPrice.trim() ? rawPrice.trim() : 'Contact for Price';
 }
 
 function detectCategoryGroup(product) {
-    const text = `${product.Title || ''} ${product.Category || ''} ${product.Description || ''}`.toLowerCase();
-    if (text.includes('spare') || text.includes('switch') || text.includes('roller') || text.includes('sensor') || text.includes('bracket')) {
-        return 'spares';
-    }
-    if (text.includes('assembly') || text.includes('set') || text.includes('kit') || text.includes('unit')) {
+    const text = `${product.Title || ''} ${product.Description || ''}`.toLowerCase();
+    if (text.includes('assembly') || text.includes('set') || text.includes('unit')) {
         return 'assemblies';
     }
     return 'cams';
-}
-
-/**
- * Parses Spare_Parts column from sheet if provided:
- * Example format in Sheet: "Micro Switch (120 EGP) | Cam Roller (180 EGP) | Mounting Bracket"
- * Falls back to helpful default spare parts per product if Spare_Parts column is empty.
- */
-function parseSpareParts(product) {
-    const raw = (product.Spare_Parts || product.Spares || '').trim();
-
-    if (raw) {
-        return raw.split('|').map((entry, idx) => {
-            const clean = entry.trim();
-            const priceMatch = clean.match(/\(([^)]+)\)/);
-            const priceLabel = priceMatch ? priceMatch[1].trim() : 'On Inquiry';
-            const name = clean.replace(/\([^)]+\)/, '').trim() || `Spare Part ${idx + 1}`;
-            const numericPrice = parsePriceNumber(priceLabel);
-
-            return {
-                id: `${(product.SKU || product.Title || 'item').replace(/\s+/g, '-')}-sp-${idx}`,
-                name,
-                price: numericPrice,
-                priceLabel: numericPrice > 0 ? `${numericPrice} EGP` : priceLabel,
-                parentTitle: product.Title.trim()
-            };
-        });
-    }
-
-    // Default spare parts suggestions when Spare_Parts column is not yet filled in CSV
-    const baseTitle = (product.Title || 'Component').trim();
-    return [
-        {
-            id: `${baseTitle}-sp-1`,
-            name: `Replacement Micro Switch (${baseTitle})`,
-            price: 0,
-            priceLabel: 'Ask Price',
-            parentTitle: baseTitle
-        },
-        {
-            id: `${baseTitle}-sp-2`,
-            name: `Wear Roller & Pin Kit (${baseTitle})`,
-            price: 0,
-            priceLabel: 'Ask Price',
-            parentTitle: baseTitle
-        },
-        {
-            id: `${baseTitle}-sp-3`,
-            name: `Heavy-Duty Mounting Bracket`,
-            price: 0,
-            priceLabel: 'Ask Price',
-            parentTitle: baseTitle
-        }
-    ];
 }
 
 
@@ -227,13 +171,20 @@ function renderFilteredProducts() {
     if (!grid) return;
 
     const filtered = allProducts.filter(item => {
-        const matchesCategory = activeCategory === 'all' || item._group === activeCategory;
-        if (!matchesCategory) return false;
+        if (activeCategory === 'spares') {
+            if (item._spares.length === 0) return false;
+        } else if (activeCategory !== 'all' && item._group !== activeCategory) {
+            return false;
+        }
 
         if (!searchQuery) return true;
 
-        const sparesText = item._spares.map(s => s.name).join(' ').toLowerCase();
-        const haystack = `${item.Title} ${item.Description} ${item.SKU || ''} ${item.Compatibility || ''} ${sparesText}`.toLowerCase();
+        const sparesText = item._spares
+            .map(s => `${s.name} ${s.description}`)
+            .join(' ')
+            .toLowerCase();
+
+        const haystack = `${item.ID} ${item.Title} ${item.Description} ${sparesText}`.toLowerCase();
         return haystack.includes(searchQuery);
     });
 
@@ -263,13 +214,13 @@ function renderFilteredProducts() {
 
 
 // =========================
-// CREATE PRODUCT CARD WITH SPARE PARTS
+// CREATE PRODUCT CARD
 // =========================
 
 function createProductCard(product) {
     const title = product.Title.trim();
-    const description = product.Description || 'Precision elevator component built for reliable performance.';
-    const sku = (product.SKU || '').trim();
+    const description = product.Description || '';
+    const sku = (product.ID || product.Folder_ID || '').trim();
     const priceNum = parsePriceNumber(product.Price);
     const priceLabel = formatPriceLabel(product.Price);
     const imageUrl = getDirectImageUrl(product.Image_URL);
@@ -313,7 +264,7 @@ function createProductCard(product) {
 
     const category = document.createElement('span');
     category.className = 'product-category';
-    category.textContent = product.Category || '4T LIFT / ELEVATOR & SPARES';
+    category.textContent = `4T LIFT • ${sku || 'COMPONENT'}`;
 
     const heading = document.createElement('h3');
     heading.className = 'product-title';
@@ -324,28 +275,38 @@ function createProductCard(product) {
     desc.className = 'product-description';
     desc.textContent = description;
 
-    // Spare parts preview box
-    const sparesBox = document.createElement('div');
-    sparesBox.className = 'spares-box';
+    // Spare parts box linked via ID
+    if (spares.length > 0) {
+        const sparesBox = document.createElement('div');
+        sparesBox.className = 'spares-box';
 
-    const sparesTitle = document.createElement('div');
-    sparesTitle.className = 'spares-box-title';
-    sparesTitle.textContent = `Available Spare Parts (${spares.length})`;
+        const sparesTitle = document.createElement('div');
+        sparesTitle.className = 'spares-box-title';
+        sparesTitle.textContent = `Spare Parts (${spares.length})`;
 
-    const sparesTags = document.createElement('div');
-    sparesTags.className = 'spares-tags';
+        const sparesTags = document.createElement('div');
+        sparesTags.className = 'spares-tags';
 
-    spares.slice(0, 3).forEach(sp => {
-        const chip = document.createElement('span');
-        chip.className = 'spare-chip';
-        chip.textContent = sp.name;
-        sparesTags.appendChild(chip);
-    });
+        spares.forEach(sp => {
+            const chip = document.createElement('span');
+            chip.className = 'spare-chip';
+            chip.textContent = `${sp.name} (${sp.priceLabel})`;
+            sparesTags.appendChild(chip);
+        });
 
-    sparesBox.appendChild(sparesTitle);
-    sparesBox.appendChild(sparesTags);
+        sparesBox.appendChild(sparesTitle);
+        sparesBox.appendChild(sparesTags);
+        body.appendChild(category);
+        body.appendChild(heading);
+        body.appendChild(desc);
+        body.appendChild(sparesBox);
+    } else {
+        body.appendChild(category);
+        body.appendChild(heading);
+        body.appendChild(desc);
+    }
 
-    // Footer with price & online order actions
+    // Footer
     const footer = document.createElement('div');
     footer.className = 'product-footer';
 
@@ -356,7 +317,7 @@ function createProductCard(product) {
     priceValue.textContent = priceLabel;
 
     const priceNote = document.createElement('small');
-    priceNote.textContent = 'UNIT PRICE';
+    priceNote.textContent = 'MAIN UNIT PRICE';
 
     priceElement.appendChild(priceValue);
     priceElement.appendChild(priceNote);
@@ -367,7 +328,7 @@ function createProductCard(product) {
     const detailsBtn = document.createElement('button');
     detailsBtn.type = 'button';
     detailsBtn.className = 'btn-details';
-    detailsBtn.textContent = 'Parts & Specs';
+    detailsBtn.textContent = spares.length > 0 ? `Parts (${spares.length})` : 'Details';
     detailsBtn.addEventListener('click', () => openProductModal(product));
 
     const orderBtn = document.createElement('button');
@@ -376,7 +337,7 @@ function createProductCard(product) {
     orderBtn.textContent = '+ Order';
     orderBtn.addEventListener('click', () => {
         addToOrderBag({
-            id: `prod-${sku || title}`,
+            id: `prod-${sku}-${title}`,
             name: title,
             sku: sku || '4T-ITEM',
             price: priceNum,
@@ -391,10 +352,6 @@ function createProductCard(product) {
     footer.appendChild(priceElement);
     footer.appendChild(actions);
 
-    body.appendChild(category);
-    body.appendChild(heading);
-    body.appendChild(desc);
-    body.appendChild(sparesBox);
     body.appendChild(footer);
 
     card.appendChild(imageContainer);
@@ -426,7 +383,7 @@ function openProductModal(product) {
     if (!backdrop || !content) return;
 
     const title = product.Title.trim();
-    const sku = (product.SKU || '4T-STD').trim();
+    const sku = (product.ID || '4T-STD').trim();
     const priceNum = parsePriceNumber(product.Price);
     const priceLabel = formatPriceLabel(product.Price);
     const imgSrc = getDirectImageUrl(product.Image_URL) || 'https://placehold.co/600x400?text=4T+Lift';
@@ -438,10 +395,9 @@ function openProductModal(product) {
                 <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(title)}">
             </div>
             <div>
-                <span class="product-category">${escapeHtml(product.Category || '4T LIFT COMPONENT')} • SKU: ${escapeHtml(sku)}</span>
+                <span class="product-category">4T LIFT COMPONENT • ID: ${escapeHtml(sku)}</span>
                 <h3 class="product-title" id="modal-title" style="margin-top:6px;">${escapeHtml(title)}</h3>
                 <p class="product-description" style="margin-top:10px;">${escapeHtml(product.Description || '')}</p>
-                ${product.Compatibility ? `<p class="product-description"><strong>Compatibility:</strong> ${escapeHtml(product.Compatibility)}</p>` : ''}
                 <div style="margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
                     <div class="product-price">
                         <span>${escapeHtml(priceLabel)}</span>
@@ -455,7 +411,7 @@ function openProductModal(product) {
         </div>
 
         <div class="modal-spares-section">
-            <h4>Spare Parts for ${escapeHtml(title)}</h4>
+            <h4>Spare Parts for ${escapeHtml(title)} (${spares.length})</h4>
             <div id="modal-spares-list"></div>
         </div>
     `;
@@ -477,32 +433,42 @@ function openProductModal(product) {
 
     const sparesList = document.getElementById('modal-spares-list');
     if (sparesList) {
-        spares.forEach(sp => {
-            const row = document.createElement('div');
-            row.className = 'spare-part-row';
+        if (spares.length === 0) {
+            sparesList.innerHTML = `<p class="cart-item-meta">No individual spare parts listed for this unit.</p>`;
+        } else {
+            spares.forEach(sp => {
+                const row = document.createElement('div');
+                row.className = 'spare-part-row';
 
-            row.innerHTML = `
-                <div>
-                    <strong>${escapeHtml(sp.name)}</strong>
-                    <div class="cart-item-meta">For: ${escapeHtml(title)} • ${escapeHtml(sp.priceLabel)}</div>
-                </div>
-                <button type="button" class="spare-add-btn">+ Add Part</button>
-            `;
+                row.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="${escapeHtml(sp.imageUrl || 'https://placehold.co/80x80?text=Part')}"
+                             alt="${escapeHtml(sp.name)}"
+                             style="width:52px; height:52px; object-fit:contain; background:#fff; border:1px solid #E1E5EA; padding:4px; border-radius:4px;">
+                        <div>
+                            <strong>${escapeHtml(sp.name)}</strong>
+                            ${sp.description ? `<div class="cart-item-meta">${escapeHtml(sp.description)}</div>` : ''}
+                            <div class="cart-item-meta" style="color:#F47721; font-weight:700;">${escapeHtml(sp.priceLabel)}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="spare-add-btn">+ Add Part</button>
+                `;
 
-            row.querySelector('.spare-add-btn').addEventListener('click', () => {
-                addToOrderBag({
-                    id: sp.id,
-                    name: sp.name,
-                    sku: `SP-${sku}`,
-                    price: sp.price,
-                    priceLabel: sp.priceLabel
+                row.querySelector('.spare-add-btn').addEventListener('click', () => {
+                    addToOrderBag({
+                        id: sp.id,
+                        name: `${sp.name} (Spare for ${title})`,
+                        sku: `${sku}-SP`,
+                        price: sp.price,
+                        priceLabel: sp.priceLabel
+                    });
+                    closeProductModal();
+                    openOrderBag();
                 });
-                closeProductModal();
-                openOrderBag();
-            });
 
-            sparesList.appendChild(row);
-        });
+                sparesList.appendChild(row);
+            });
+        }
     }
 
     backdrop.classList.add('open');
@@ -655,7 +621,7 @@ function escapeHtml(str) {
 
 
 // =========================
-// LOAD PRODUCTS
+// LOAD PRODUCTS & GROUP SPARE PARTS BY ID
 // =========================
 
 async function fetchProducts() {
@@ -689,7 +655,7 @@ async function fetchProducts() {
             header.replace(/^\uFEFF/, '').trim()
         );
 
-        const products = rows.slice(1).map(row => {
+        const items = rows.slice(1).map(row => {
             const item = {};
             headers.forEach((header, index) => {
                 item[header] = row[index] || '';
@@ -697,25 +663,62 @@ async function fetchProducts() {
             return item;
         });
 
-        const availableProducts = products
-            .filter(product => {
-                if (!product.Title || !product.Title.trim()) return false;
-                const status = (product.Status || '').trim().toLowerCase();
-                return !status || status === 'available';
-            })
-            .map(product => ({
-                ...product,
-                _group: detectCategoryGroup(product),
-                _spares: parseSpareParts(product)
-            }));
+        const availableItems = items.filter(item => {
+            if (!item.Title || !item.Title.trim()) return false;
+            const status = (item.Status || '').trim().toLowerCase();
+            return !status || status === 'available';
+        });
 
-        allProducts = availableProducts;
+        // Separate main products from spare parts using Type column (or first row per ID fallback)
+        const seenIds = new Set();
+        const mainProducts = [];
+        const spareRows = [];
+
+        availableItems.forEach(item => {
+            const type = (item.Type || '').trim().toLowerCase();
+            const groupId = (item.ID || item.Folder_ID || '').trim();
+
+            if (type === 'spare' || type === 'spare part' || type === 'part') {
+                spareRows.push(item);
+            } else if (type === 'product' || type === 'main') {
+                mainProducts.push(item);
+                if (groupId) seenIds.add(groupId);
+            } else {
+                // Fallback if Type column isn't added yet: first occurrence of ID is Product, subsequent rows with same ID are Spare Parts
+                if (groupId && seenIds.has(groupId)) {
+                    spareRows.push(item);
+                } else {
+                    mainProducts.push(item);
+                    if (groupId) seenIds.add(groupId);
+                }
+            }
+        });
+
+        allProducts = mainProducts.map(prod => {
+            const groupId = (prod.ID || prod.Folder_ID || '').trim();
+            const matchedSpares = spareRows
+                .filter(sp => (sp.ID || sp.Folder_ID || '').trim() === groupId && groupId !== '')
+                .map((sp, idx) => ({
+                    id: `${groupId}-sp-${idx}-${sp.Title.trim()}`,
+                    name: sp.Title.trim(),
+                    description: (sp.Description || '').trim(),
+                    price: parsePriceNumber(sp.Price),
+                    priceLabel: formatPriceLabel(sp.Price),
+                    imageUrl: getDirectImageUrl(sp.Image_URL)
+                }));
+
+            return {
+                ...prod,
+                _group: detectCategoryGroup(prod),
+                _spares: matchedSpares
+            };
+        });
 
         if (countElement) {
-            countElement.textContent = String(availableProducts.length).padStart(2, '0');
+            countElement.textContent = String(allProducts.length).padStart(2, '0');
         }
 
-        if (availableProducts.length === 0) {
+        if (allProducts.length === 0) {
             grid.innerHTML = `
                 <div class="empty-state">
                     No products available at the moment.
@@ -726,25 +729,21 @@ async function fetchProducts() {
 
         renderFilteredProducts();
 
-        // Use the first product image in the hero section
+        // Hero image from first product
         const heroImage = document.getElementById('hero-product-image');
         const placeholder = document.querySelector('.image-placeholder');
 
-        if (heroImage && availableProducts[0].Image_URL) {
-            heroImage.src = getDirectImageUrl(availableProducts[0].Image_URL);
+        if (heroImage && allProducts[0].Image_URL) {
+            heroImage.src = getDirectImageUrl(allProducts[0].Image_URL);
             heroImage.hidden = false;
 
             heroImage.onload = () => {
-                if (placeholder) {
-                    placeholder.style.display = 'none';
-                }
+                if (placeholder) placeholder.style.display = 'none';
             };
 
             heroImage.onerror = () => {
                 heroImage.hidden = true;
-                if (placeholder) {
-                    placeholder.style.display = 'flex';
-                }
+                if (placeholder) placeholder.style.display = 'flex';
             };
         }
 
