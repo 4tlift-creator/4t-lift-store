@@ -1365,3 +1365,67 @@ input {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Spare Parts Visual Grid Inside Product Card */
+.spares-visual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.spare-mini-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.spare-mini-img {
+    width: 100%;
+    height: 62px;
+    object-fit: contain;
+    background: #F9FAFB;
+    border-radius: 3px;
+    padding: 3px;
+}
+
+.spare-mini-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.25;
+}
+
+.spare-mini-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.spare-mini-price {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--orange);
+}
+
+.spare-mini-add {
+    border: 0;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.spare-mini-add:hover {
+    background: var(--orange);
+}
